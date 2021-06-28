@@ -1,51 +1,33 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { FaSpinner } from 'react-icons/fa';
+import { GrFavorite } from 'react-icons/gr';
 import axios from 'axios';
-import Jokes from './Jokes';
+
 import './ApiButton.css';
 
 const ApiButton = () => {
+    const [isLoading, setIsLoading] = useState(false)
+    const [state, setState] = useState({ joke: '' });
+    let iconStyles = { color: "white", fontSize: "1.9em" }
 
-    // const [useJoke, setJoke] = useEffect();
-    // const [joke, getJoke] = useState('');
-
-    // async function apiData() {
-
-    //     try {
-    //         const response = await fetch(`https://api.chucknorris.io/jokes/random`);
-    //         const data = await response.json();
-    //         // console.log(json.value);
-    //         if (!response.ok) {
-    //             throw Error(response.statusText);
-    //         } else {
-    //             console.log(data.value)
-
-
-    //         }
-    //     } catch (error) {
-    //         console.log(error);
-    //     }
-    // }
-    // useEffect(() => {
-    //     chuckJoke();
-    // }, []);
 
     const url = 'https://api.chucknorris.io/jokes/random'
-    function apiData() {
-        axios.get(url)
-            .then((response) => {
-                const chuckJoke = response.data.value;
-                console.log(chuckJoke)
-            })
+    const fetchData = async () => {
+        setIsLoading(true);
+        const result = await axios.get(url)
+        console.log(result.data.value);
+        setState({ ...state, joke: result.data.value }, setIsLoading(false));
+
 
     }
 
-
-
-
     return (
         <div className="card">
-            <button className='data' onClick={apiData}>Load</button>
-            <Jokes />
+            {!isLoading && <button className='data' onClick={fetchData}>Load</button>}
+            {isLoading && <button className='data' disabled><FaSpinner /><i className=''></i>calling joke</button>}
+            {/* <button className='data' onClick={fetchData}>Load</button> */}
+            <div className="joke" ><GrFavorite style={iconStyles} />{state.joke}</div>
+
         </div>
     )
 }

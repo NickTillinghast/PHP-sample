@@ -2,7 +2,7 @@ import React from 'react';
 
 const Jokes = (props) => {
     return <div>
-        {props.data}
+        {props.data.value}
     </div>
 }
 
