@@ -1,34 +1,77 @@
 import React, { useState } from 'react';
 import { FaSpinner } from 'react-icons/fa';
-import { GrFavorite } from 'react-icons/gr';
 import axios from 'axios';
-
+// import Jokes from './Jokes';
 import './ApiButton.css';
 
 const ApiButton = () => {
     const [isLoading, setIsLoading] = useState(false)
-    const [state, setState] = useState({ joke: '' });
-    let iconStyles = { color: "white", fontSize: "1.9em" }
+    const [joke, setJoke] = useState({ joke: '' });
+    const [likedJoke, setLikedJoke] = useState([]);
+    const [error, setError] = useState()
 
+    let iconStyles = { color: "black", fontSize: ".9em", padding: "10px", marginRight: "20px" }
+    let favoriteJokes = [];
 
     const url = 'https://api.chucknorris.io/jokes/random'
     const fetchData = async () => {
         setIsLoading(true);
-        const result = await axios.get(url)
-        console.log(result.data.value);
-        setState({ ...state, joke: result.data.value }, setIsLoading(false));
-
-
+        try {
+            // throw new Error('testing')
+            const result = await axios.get(url)
+            setJoke({ ...joke, joke: result.data.value }, setIsLoading(false));
+        }
+        catch (ex) {
+            setError(ex.message)
+        }
     }
 
+    const likeJoke = () => {
+        const newState = [...likedJoke, joke.joke]
+        setLikedJoke(
+            newState
+        );
+        localStorage.setItem("jokes", JSON.stringify(newState))
+        favoriteJokes = localStorage.getItem("jokes", JSON.stringify(newState));
+        console.log(newState)
+        console.log(favoriteJokes)
+    }
+    // const favoritesList = (favoriteJokes.map((joke) => (
+    //     <p>Hello, {joke} from the world</p>
+    // )))
+
+
     return (
+
         <div className="card">
-            {!isLoading && <button className='data' onClick={fetchData}>Load</button>}
-            {isLoading && <button className='data' disabled><FaSpinner /><i className=''></i>calling joke</button>}
-            {/* <button className='data' onClick={fetchData}>Load</button> */}
-            <div className="joke" ><GrFavorite style={iconStyles} />{state.joke}</div>
+            {
+                error && <div className='data'>Error in Finding Jokes{error}</div>
+            }
+            {
+                !isLoading && <button className='data' onClick={fetchData}>Load</button>
+            }
+            {
+                isLoading && <button className='data' disabled>
+                    <FaSpinner />
+                    Getting joke</button>
+            }
+            <div className="joke" ><button style={iconStyles} onClick={likeJoke} >Like</button >{joke.joke} </div>
+            <div>
+                <div className='fav-joke'>
+                    <div>{favoriteJokes}</div>
+                    <div>
+                        {favoriteJokes.map((joke, index) => (
+                            <div key={index}>
+                                <h3>{joke}</h3>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </div>
+
 
         </div>
+
     )
 }
 
