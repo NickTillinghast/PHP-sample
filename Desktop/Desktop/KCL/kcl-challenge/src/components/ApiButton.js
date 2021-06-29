@@ -58,14 +58,14 @@ const ApiButton = () => {
             <div className="joke" ><button style={iconStyles} onClick={likeJoke} >Like</button >{joke.joke} </div>
             <div>
                 <div className='fav-joke'>
-                    <div>{favoriteJokes}</div>
                     <div>
-                        {favoriteJokes.map((joke, index) => (
-                            <div key={index}>
-                                <h3>{joke}</h3>
+                        {favoriteJokes.map((item, index) => {
+                            return <div key={index}>
+                                <h3>{item}</h3>
                             </div>
-                        ))}
+                        })}
                     </div>
+                    {/* <div>{favoriteJokes}</div> */}
                 </div>
             </div>
 
